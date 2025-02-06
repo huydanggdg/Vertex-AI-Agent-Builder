@@ -11,7 +11,7 @@
     <!-- Button to get input value -->
     <button onclick="search()">Get Value</button>
 
-    <script>
+    <script src="https://cloud.google.com/ai/gen-app-builder/client?hl=en_US">
       function doGet(){
         return HtmlService.createHtmlOutputFromFile('index')
       }
@@ -80,5 +80,18 @@
 
     <p> Links refer: </p> 
     <div id="links"></div> 
+
+    <p>-------------------</p>
+    <!-- Widget JavaScript bundle -->
+
+
+<!-- Search widget element is not visible by default -->
+<gen-search-widget
+  configId="797fdae6-96b3-4cb1-b552-d584eb33257a"
+  triggerId="searchWidgetTrigger">
+</gen-search-widget>
+
+<!-- Element that opens the widget on click. It does not have to be an input -->
+<input placeholder="Search here" id="searchWidgetTrigger" />
   </body>
 </html>
