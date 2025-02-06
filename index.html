@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <h1>Hãy điền nội dung cần hỏi</h1>
+    <!-- Input field -->
+    <input type="text" id="content" placeholder="Nhập nội dung câu hỏi">
+
+    <!-- Button to get input value -->
+    <button onclick="search()">Get Value</button>
+
+    <script>
+      function doGet(){
+        return HtmlService.createHtmlOutputFromFile('index')
+      }
+      async function search() {
+        const input = document.getElementById("content");
+        const inputValue = input.value;
+        console.log(inputValue);
+        const url = "https://discoveryengine.googleapis.com/v1alpha/projects/1074616070606/locations/global/collections/default_collection/engines/government_1736757580069/servingConfigs/default_search:search";
+        const headers = {
+          "Authorization": "Bearer <key>",
+          "Content-Type": "application/json"
+        };
+        const data = {
+          "query": inputValue,
+          "pageSize": 10,
+          "queryExpansionSpec": { "condition": "AUTO" },
+          "spellCorrectionSpec": { "mode": "AUTO" },
+          "contentSearchSpec": { "extractiveContentSpec": { "maxExtractiveAnswerCount": 1 } }
+        };
+
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(data)
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+          const contentValues = result.results.map(result => {
+          return result.document.derivedStructData.extractive_answers[0].content;
+          });
+          console.log(contentValues); 
+
+
+          const links = result.results.map(result => result.document.derivedStructData.link);
+
+          // Display the result in an HTML element
+          const resultsDiv = document.getElementById('results'); 
+          resultsDiv.innerHTML = `<pre>${JSON.stringify(contentValues, null, 2)}</pre>`;
+
+           // Display the links in an HTML element
+          const resultsDiv2 = document.getElementById('links'); 
+          resultsDiv2.innerHTML = `<pre>${JSON.stringify(links, null, 2)}</pre>`;         
+
+          
+
+        
+          
+
+        } catch (error) {
+          console.error("Error:", error);
+        }
+
+        
+      }
+
+      search();
+
+    </script>
+    <p> answer: </p>
+    <div id="results"></div>
+
+    <p> Links refer: </p> 
+    <div id="links"></div> 
+  </body>
+</html>
